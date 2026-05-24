@@ -18,14 +18,23 @@
                 </li>
 
                 @auth
-                    @if(auth()->user()->hasRole('admin'))
+                    @can('ver usuarios')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
-                               href="{{ route('admin.users') }}">
+                            href="{{ route('admin.users') }}">
                                 <i class="bi bi-people"></i> Gestión de Usuarios
                             </a>
                         </li>
-                    @endif
+                    @endcan
+
+                    @can('ver roles')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.roles*') ? 'active' : '' }}"
+                            href="{{ route('admin.roles') }}">
+                                <i class="bi bi-shield-lock"></i> Gestión de Roles
+                            </a>
+                        </li>
+                    @endcan
                 @endauth
             </ul>
 

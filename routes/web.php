@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,14 +14,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
-// O si quieres mantener welcome pero redirigir si no está autenticado:
-// Route::get('/', function () {
-//     if (auth()->check()) {
-//         return redirect()->route('dashboard');
-//     }
-//     return view('welcome');
-// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -39,11 +32,19 @@ Route::middleware(['auth'])->group(function () {
     })->middleware('role:admin,editor')->name('editor.panel');
 });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     // Gestión de usuarios
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/users/{user}/edit-role', [UserController::class, 'editRole'])->name('users.edit-role');
     Route::put('/users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.update-role');
+
+    // Gestión de roles (con permisos)
+    Route::get('/roles', [RoleController::class, 'index'])->middleware('can:ver roles')->name('roles');
+    Route::get('/roles/create', [RoleController::class, 'create'])->middleware('can:crear roles')->name('roles.create');
+    Route::post('/roles', [RoleController::class, 'store'])->middleware('can:crear roles')->name('roles.store');
+    Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->middleware('can:editar roles')->name('roles.edit');
+    Route::put('/roles/{id}', [RoleController::class, 'update'])->middleware('can:editar roles')->name('roles.update');
+    Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->middleware('can:eliminar roles')->name('roles.destroy');
 });
 
 require __DIR__.'/auth.php';
