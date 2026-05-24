@@ -1,22 +1,26 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
+// Redirigir la raíz al login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
+
+// O si quieres mantener welcome pero redirigir si no está autenticado:
+// Route::get('/', function () {
+//     if (auth()->check()) {
+//         return redirect()->route('dashboard');
+//     }
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -35,5 +39,11 @@ Route::middleware(['auth'])->group(function () {
     })->middleware('role:admin,editor')->name('editor.panel');
 });
 
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Gestión de usuarios
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::get('/users/{user}/edit-role', [UserController::class, 'editRole'])->name('users.edit-role');
+    Route::put('/users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.update-role');
+});
 
 require __DIR__.'/auth.php';
