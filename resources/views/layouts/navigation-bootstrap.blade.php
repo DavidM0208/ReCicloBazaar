@@ -35,6 +35,15 @@
                             </a>
                         </li>
                     @endcan
+
+                    @can('gestionar permisos')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.permissions*') ? 'active' : '' }}"
+                            href="{{ route('admin.permissions') }}">
+                                <i class="bi bi-key"></i> Gestión de Permisos
+                            </a>
+                        </li>
+                    @endcan
                 @endauth
             </ul>
 

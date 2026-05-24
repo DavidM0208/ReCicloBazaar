@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])->middleware('can:editar roles')->name('roles.edit');
     Route::put('/roles/{id}', [RoleController::class, 'update'])->middleware('can:editar roles')->name('roles.update');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->middleware('can:eliminar roles')->name('roles.destroy');
+
+    // Gestión de permisos
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions');
+    Route::get('/permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/permissions/role/{roleId}', [PermissionController::class, 'getRolePermissions'])->name('permissions.role');
+    Route::put('/permissions/role/{roleId}', [PermissionController::class, 'updateRolePermissions'])->name('permissions.update');
+    Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+    Route::get('/permissions/user/{userId}', [PermissionController::class, 'userPermissions'])->name('permissions.user');
 });
 
 require __DIR__.'/auth.php';
